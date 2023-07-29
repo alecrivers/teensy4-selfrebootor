@@ -19,7 +19,9 @@ imxrt-ral = "0.5.1"
 log = "0.4.19"
 
 # Additional CI dependencies
-teensy4-bsp = { version = "0.4.3" }
+#teensy4-bsp = { version = "0.4.3" }
+usb-device = "0.2.9"
+usbd-hid = "0.6.1"
 
 
 [dev-dependencies]
@@ -34,6 +36,15 @@ critical-section = "1.1.1"
 
 # Packages necessary for board usage
 nb = "1.1.0" # Async
+
+cortex-m-rtic = "1.1.4" # RTOS
+imxrt-log = { version = "0.1.1", default-features = false, features = [
+    "log",
+    "lpuart",
+] }
+imxrt-usbd = "0.2.1"
+usbd-serial = "0.1.1"
+teensy4-panic = "0.2.2"
 
 # Allow docsrs options
 [package.metadata.docs.rs]
