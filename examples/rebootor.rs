@@ -9,7 +9,6 @@ use teensy4_bsp as bsp;
 
 use bsp::board;
 use bsp::hal;
-use bsp::ral;
 
 mod common;
 use common::uart::{uart_log, UartWriter};
@@ -21,8 +20,7 @@ fn main() -> ! {
         pins,
         lpuart6,
         gpt1: mut us_timer,
-        ccm,
-        flexio2,
+        //ccm,
         ..
     } = board::tmm(board::instances());
 
