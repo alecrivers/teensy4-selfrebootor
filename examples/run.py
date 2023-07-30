@@ -13,6 +13,7 @@ def main():
         exit(1)
 
     binary = sys.argv[1]
+    print(f"Flashing {binary} ...")
 
     with TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)

@@ -15,7 +15,7 @@ use bsp::board;
 mod app {
     use super::board;
 
-    use hal::usbd::{BusAdapter, EndpointMemory, EndpointState, Speed};
+    use hal::usbd::{BusAdapter, EndpointMemory, EndpointState};
     use imxrt_hal as hal;
 
     use embedded_hal::serial::Write;
@@ -27,12 +27,6 @@ mod app {
         descriptor::{MouseReport, SerializedDescriptor as _},
         hid_class::HIDClass,
     };
-
-    /// Change me if you want to play with a full-speed USB device.
-    const SPEED: Speed = Speed::High;
-    /// Matches whatever is in imxrt-log.
-    const VID_PID: UsbVidPid = UsbVidPid(0x5824, 0x27dd);
-    const PRODUCT: &str = "imxrt-hal-example";
 
     const LOG_POLL_INTERVAL: u32 = board::PERCLK_FREQUENCY / 1_000;
     const LOG_DMA_CHANNEL: usize = 0;
@@ -69,12 +63,8 @@ mod app {
         let board::Resources {
             pins,
             pit: (_, _, _, mut poll_log),
-            gpt2,
-            mut trng,
             mut dma,
             lpuart6,
-            flexio2,
-            ccm,
             usb,
             mut gpio2,
             ..
@@ -97,7 +87,7 @@ mod app {
         led.set();
 
         // USB
-        let bus = BusAdapter::with_speed(usb, &EP_MEMORY, &EP_STATE, SPEED);
+        let bus = BusAdapter::new(usb, &EP_MEMORY, &EP_STATE);
         bus.set_interrupts(true);
         bus.gpt_mut(GPT_INSTANCE, |gpt| {
             gpt.stop();
@@ -113,10 +103,9 @@ mod app {
         // Note that "4" correlates to a 1ms polling interval. Since this is a high speed
         // device, bInterval is computed differently.
         let class = HIDClass::new(bus, MouseReport::desc(), 4);
-        let device = UsbDeviceBuilder::new(bus, VID_PID)
-            .product(PRODUCT)
-            .device_class(usbd_serial::USB_CLASS_CDC)
-            .max_packet_size_0(64)
+        let device = UsbDeviceBuilder::new(bus, UsbVidPid(0x16C0, 0x0477))
+            .product("Rebootor")
+            .manufacturer("PJRC")
             .build();
 
         (
@@ -175,8 +164,8 @@ mod app {
                 class
                     .push_input(&MouseReport {
                         buttons: 0,
-                        x: 4,
-                        y: 4,
+                        x: 0,
+                        y: 0,
                         wheel: 0,
                         pan: 0,
                     })
