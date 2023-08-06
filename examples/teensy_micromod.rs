@@ -1,7 +1,6 @@
-//! Demonstrates a USB mouse using RTIC.
-//!
-//! Flash your board with this example. You should observe your mouse slowly
-//! inching in one direction every time the LED blinks.
+// This example demonstrates a program that also acts as a rebootor.
+// When being programmed with the `-r` flag, it will reboot itself into
+// the bootloader.
 
 #![no_std]
 #![no_main]
@@ -30,7 +29,7 @@ mod app {
 
     #[local]
     struct Local {
-        rebootor: Rebootor,
+        rebootor: Rebootor<'static>,
         led: board::Led,
     }
 

@@ -14,13 +14,10 @@ exclude = ["/.gitignore", "/.github/", "/.vscode/"]
 
 
 [dependencies]
-imxrt-hal = "0.5.3"
-imxrt-ral = "0.5.2"
-imxrt-usbd = "0.2.1"
 log = "0.4.19"
 
 # Additional CI dependencies
-#teensy4-bsp = { version = "0.4.3" }
+teensy4-bsp = { version = "0.4.3" }
 usb-device = "0.2.9"
 usbd-hid = "0.6.1"
 
@@ -43,8 +40,6 @@ imxrt-log = { version = "0.1.1", default-features = false, features = [
     "log",
     "lpuart",
 ] }
-imxrt-usbd = "0.2.1"
-usbd-serial = "0.1.1"
 teensy4-panic = "0.2.2"
 
 # Allow docsrs options
