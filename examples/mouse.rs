@@ -152,9 +152,7 @@ mod app {
             configured,
         } = ctx.local;
 
-        if !device.poll(&mut [class]) {
-            return;
-        }
+        device.poll(&mut [class]);
 
         if device.state() == UsbDeviceState::Configured {
             if !*configured {
@@ -177,13 +175,22 @@ mod app {
                 elapsed
             });
 
+            let mut buf = [0u8; 20];
+            let result = class.pull_raw_output(&mut buf);
+            match result {
+                Ok(info) => {
+                    log::info!("Data received: {:?}", info);
+                    log::info!("Data: {:?}", core::str::from_utf8(&buf[..info]));
+                }
+                Err(usb_device::UsbError::WouldBlock) => (),
+                Err(e) => {
+                    log::info!("Report error: {:?}", e);
+                }
+            }
             if elapsed {
                 led.toggle();
-                class
-                    .push_input(&crate::Mouse2Report {
-                        output_buffer: Default::default(),
-                    })
-                    .ok();
+
+                log::info!(".");
             }
         }
     }
