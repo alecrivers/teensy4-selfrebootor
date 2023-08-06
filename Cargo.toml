@@ -15,7 +15,8 @@ exclude = ["/.gitignore", "/.github/", "/.vscode/"]
 
 [dependencies]
 imxrt-hal = "0.5.3"
-imxrt-ral = "0.5.1"
+imxrt-ral = "0.5.2"
+imxrt-usbd = "0.2.1"
 log = "0.4.19"
 
 # Additional CI dependencies
