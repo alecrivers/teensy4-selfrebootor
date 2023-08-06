@@ -5,8 +5,9 @@
 #![no_std]
 #![no_main]
 
+mod common;
+
 use teensy4_bsp as bsp;
-use teensy4_panic as _;
 
 #[rtic::app(device = teensy4_bsp)]
 mod app {
@@ -18,6 +19,8 @@ mod app {
     use usb_device::bus::UsbBusAllocator;
 
     use teensy4_selfrebootor::Rebootor;
+
+    use crate::common::uart::{uart_log, UartWriter};
 
     /// This allocation is shared across all USB endpoints. It needs to be large
     /// enough to hold the maximum packet size for *all* endpoints. If you start
@@ -42,8 +45,20 @@ mod app {
             pins,
             usb,
             mut gpio2,
+            lpuart6,
             ..
         } = board::tmm(cx.device);
+
+        // Initialize UART
+        let mut uart = UartWriter::new(board::lpuart(lpuart6, pins.p1, pins.p0, 115200));
+        writeln!(uart);
+
+        // Write welcome message
+        writeln!(uart, "===== Rebootor example =====");
+        writeln!(uart);
+
+        // Initialize logging
+        uart_log::init(uart, log::LevelFilter::Debug);
 
         // Initialize LED
         let led = board::led(&mut gpio2, pins.p13);
