@@ -11,21 +11,6 @@ use teensy4_panic as _;
 
 use bsp::board;
 
-use usbd_hid::descriptor::generator_prelude::*;
-
-/// MouseReport describes a report and its companion descriptor than can be used
-/// to send mouse movements and button presses to a host.
-#[gen_hid_descriptor(
-    (collection = APPLICATION, usage_page = VENDOR_DEFINED_START, usage = 0x0100) = {
-        (usage = 0x02,) = {
-            output_buffer=output;
-        };
-    }
-)]
-struct Mouse2Report {
-    output_buffer: [u8; 6],
-}
-
 #[rtic::app(device = teensy4_bsp)]
 mod app {
     use super::board;
@@ -114,7 +99,11 @@ mod app {
         let bus = cx.local.bus.insert(UsbBusAllocator::new(bus));
         // Note that "4" correlates to a 1ms polling interval. Since this is a high speed
         // device, bInterval is computed differently.
-        let class = HIDClass::new(bus, crate::Mouse2Report::desc(), 10);
+        let class = HIDClass::new(
+            bus,
+            teensy4_selfrebootor::hid_descriptor::Rebootor::desc(),
+            10,
+        );
         let device = UsbDeviceBuilder::new(bus, UsbVidPid(0x16C0, 0x0477))
             .product("Rebootor")
             .manufacturer("PJRC")
@@ -157,9 +146,6 @@ mod app {
         if device.state() == UsbDeviceState::Configured {
             if !*configured {
                 device.bus().configure();
-                log::info!("Configure!");
-                let desc: &[u8] = crate::Mouse2Report::desc();
-                log::info!("{:02x?}", desc);
             }
             *configured = true;
         } else {
@@ -180,7 +166,11 @@ mod app {
             match result {
                 Ok(info) => {
                     log::info!("Data received: {:?}", info);
-                    log::info!("Data: {:?}", core::str::from_utf8(&buf[..info]));
+                    let buf = &buf[..info];
+                    log::info!("Data: {:?}", core::str::from_utf8(buf));
+                    if buf == b"reboot" {
+                        unsafe { core::arch::asm!("bkpt #251") };
+                    }
                 }
                 Err(usb_device::UsbError::WouldBlock) => (),
                 Err(e) => {
@@ -189,8 +179,6 @@ mod app {
             }
             if elapsed {
                 led.toggle();
-
-                log::info!(".");
             }
         }
     }
