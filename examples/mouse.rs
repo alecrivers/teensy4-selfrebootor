@@ -106,6 +106,8 @@ mod app {
         let device = UsbDeviceBuilder::new(bus, UsbVidPid(0x16C0, 0x0477))
             .product("Rebootor")
             .manufacturer("PJRC")
+            .self_powered(true)
+            .max_power(160)
             .build();
 
         (
