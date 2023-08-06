@@ -11,6 +11,21 @@ use teensy4_panic as _;
 
 use bsp::board;
 
+use usbd_hid::descriptor::generator_prelude::*;
+
+/// MouseReport describes a report and its companion descriptor than can be used
+/// to send mouse movements and button presses to a host.
+#[gen_hid_descriptor(
+    (collection = APPLICATION, usage_page = VENDOR_DEFINED_START, usage = 0x0100) = {
+        (usage = 0x02,) = {
+            output_buffer=output;
+        };
+    }
+)]
+struct Mouse2Report {
+    output_buffer: [u8; 6],
+}
+
 #[rtic::app(device = teensy4_bsp)]
 mod app {
     use super::board;
@@ -23,10 +38,7 @@ mod app {
         bus::UsbBusAllocator,
         device::{UsbDevice, UsbDeviceBuilder, UsbDeviceState, UsbVidPid},
     };
-    use usbd_hid::{
-        descriptor::{MouseReport, SerializedDescriptor as _},
-        hid_class::HIDClass,
-    };
+    use usbd_hid::{descriptor::SerializedDescriptor as _, hid_class::HIDClass};
 
     const LOG_POLL_INTERVAL: u32 = board::PERCLK_FREQUENCY / 1_000;
     const LOG_DMA_CHANNEL: usize = 0;
@@ -102,12 +114,11 @@ mod app {
         let bus = cx.local.bus.insert(UsbBusAllocator::new(bus));
         // Note that "4" correlates to a 1ms polling interval. Since this is a high speed
         // device, bInterval is computed differently.
-        let class = HIDClass::new(bus, MouseReport::desc(), 4);
+        let class = HIDClass::new(bus, crate::Mouse2Report::desc(), 10);
         let device = UsbDeviceBuilder::new(bus, UsbVidPid(0x16C0, 0x0477))
             .product("Rebootor")
             .manufacturer("PJRC")
             .self_powered(true)
-            .max_power(160)
             .build();
 
         (
@@ -141,11 +152,16 @@ mod app {
             configured,
         } = ctx.local;
 
-        device.poll(&mut [class]);
+        if !device.poll(&mut [class]) {
+            return;
+        }
 
         if device.state() == UsbDeviceState::Configured {
             if !*configured {
                 device.bus().configure();
+                log::info!("Configure!");
+                let desc: &[u8] = crate::Mouse2Report::desc();
+                log::info!("{:02x?}", desc);
             }
             *configured = true;
         } else {
@@ -164,12 +180,8 @@ mod app {
             if elapsed {
                 led.toggle();
                 class
-                    .push_input(&MouseReport {
-                        buttons: 0,
-                        x: 0,
-                        y: 0,
-                        wheel: 0,
-                        pan: 0,
+                    .push_input(&crate::Mouse2Report {
+                        output_buffer: Default::default(),
                     })
                     .ok();
             }
