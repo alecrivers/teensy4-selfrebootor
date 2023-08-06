@@ -86,26 +86,24 @@ mod app {
         // USB
         let bus = BusAdapter::new(usb, &EP_MEMORY, &EP_STATE);
         bus.set_interrupts(true);
-        bus.gpt_mut(GPT_INSTANCE, |gpt| {
-            gpt.stop();
-            gpt.clear_elapsed();
-            gpt.set_interrupt_enabled(true);
-            gpt.set_mode(imxrt_usbd::gpt::Mode::Repeat);
-            gpt.set_load(MOUSE_UPDATE_INTERVAL_MS * 1000);
-            gpt.reset();
-            gpt.run();
-        });
+        // bus.gpt_mut(GPT_INSTANCE, |gpt| {
+        //     gpt.stop();
+        //     gpt.clear_elapsed();
+        //     gpt.set_interrupt_enabled(true);
+        //     gpt.set_mode(imxrt_usbd::gpt::Mode::Repeat);
+        //     gpt.set_load(MOUSE_UPDATE_INTERVAL_MS * 1000);
+        //     gpt.reset();
+        //     gpt.run();
+        // });
 
         let bus = cx.local.bus.insert(UsbBusAllocator::new(bus));
-        // Note that "4" correlates to a 1ms polling interval. Since this is a high speed
-        // device, bInterval is computed differently.
         let class = HIDClass::new(
             bus,
             teensy4_selfrebootor::hid_descriptor::Rebootor::desc(),
             10,
         );
         let device = UsbDeviceBuilder::new(bus, UsbVidPid(0x16C0, 0x0477))
-            .product("Rebootor")
+            .product("Self-Rebootor")
             .manufacturer("PJRC")
             .self_powered(true)
             .build();
@@ -153,15 +151,8 @@ mod app {
         }
 
         if *configured {
-            let elapsed = device.bus().gpt_mut(GPT_INSTANCE, |gpt| {
-                let elapsed = gpt.is_elapsed();
-                while gpt.is_elapsed() {
-                    gpt.clear_elapsed();
-                }
-                elapsed
-            });
-
             let mut buf = [0u8; 20];
+
             let result = class.pull_raw_output(&mut buf);
             match result {
                 Ok(info) => {
@@ -169,7 +160,7 @@ mod app {
                     let buf = &buf[..info];
                     log::info!("Data: {:?}", core::str::from_utf8(buf));
                     if buf == b"reboot" {
-                        unsafe { core::arch::asm!("bkpt #251") };
+                        //unsafe { core::arch::asm!("bkpt #251") };
                     }
                 }
                 Err(usb_device::UsbError::WouldBlock) => (),
@@ -177,9 +168,8 @@ mod app {
                     log::info!("Report error: {:?}", e);
                 }
             }
-            if elapsed {
-                led.toggle();
-            }
+
+            led.toggle();
         }
     }
 }
