@@ -24,6 +24,7 @@ impl<'a> Rebootor<'a> {
             .product("Self-Rebootor")
             .manufacturer("PJRC")
             .self_powered(true)
+            .max_packet_size_0(64)
             .build();
 
         Self {

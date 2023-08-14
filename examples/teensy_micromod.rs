@@ -13,6 +13,7 @@ mod app {
     use super::bsp;
     use bsp::board;
     use bsp::hal;
+    use bsp::logging;
 
     use embedded_hal::serial::Write;
 
@@ -35,7 +36,7 @@ mod app {
     #[local]
     struct Local {
         poll_log: hal::pit::Pit<3>,
-        log_poller: bsp::logging::Poller,
+        log_poller: logging::Poller,
         rebootor: Rebootor<'static>,
         led: board::Led,
     }
@@ -63,7 +64,7 @@ mod app {
         }
         nb::block!(log_uart.flush()).unwrap();
         let log_poller =
-            imxrt_log::log::lpuart(log_uart, log_dma, imxrt_log::Interrupts::Enabled).unwrap();
+            logging::log::lpuart(log_uart, log_dma, logging::Interrupts::Enabled).unwrap();
         poll_log.set_interrupt_enable(true);
         poll_log.set_load_timer_value(LOG_POLL_INTERVAL);
         poll_log.enable();
