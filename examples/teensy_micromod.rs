@@ -46,7 +46,7 @@ mod app {
     struct Shared {}
 
     #[init(local = [bus: Option<UsbBusAllocator<BusAdapter>> = None])]
-    fn init(cx: init::Context) -> (Shared, Local, init::Monotonics) {
+    fn init(cx: init::Context) -> (Shared, Local) {
         let board::Resources {
             mut dma,
             pit: (_, _, _, mut poll_log),
@@ -88,13 +88,12 @@ mod app {
                 rebootor,
                 led,
             },
-            init::Monotonics(),
         )
     }
 
     #[task(binds = USB_OTG1, local = [rebootor, led], priority = 5)]
     fn usb1(ctx: usb1::Context) {
-        let usb1::LocalResources { rebootor, led } = ctx.local;
+        let usb1::LocalResources { rebootor, led, .. } = ctx.local;
 
         rebootor.poll();
         led.toggle();
@@ -105,6 +104,7 @@ mod app {
         let blink_and_log::LocalResources {
             poll_log,
             log_poller,
+            ..
         } = cx.local;
 
         if poll_log.is_elapsed() {

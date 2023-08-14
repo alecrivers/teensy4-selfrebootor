@@ -46,7 +46,7 @@ critical-section = "1.1.1"
 # Packages necessary for board usage
 nb = "1.1.0" # Async
 
-cortex-m-rtic = "1.1.4" # RTOS
+rtic = { version = "2.0.1", features = ["thumbv7-backend"] }
 
 
 # Allow docsrs options
