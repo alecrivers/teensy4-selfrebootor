@@ -18,6 +18,7 @@ mod app {
     use embedded_hal::serial::Write;
 
     use hal::usbd::{BusAdapter, EndpointMemory, EndpointState};
+    use imxrt_usbd::Speed;
     use usb_device::bus::UsbBusAllocator;
 
     use teensy4_selfrebootor::Rebootor;
@@ -74,7 +75,7 @@ mod app {
         led.set();
 
         // USB
-        let bus = BusAdapter::new(usb, &EP_MEMORY, &EP_STATE);
+        let bus = BusAdapter::with_speed(usb, &EP_MEMORY, &EP_STATE, Speed::LowFull);
         bus.set_interrupts(true);
         let bus = cx.local.bus.insert(UsbBusAllocator::new(bus));
         let rebootor = teensy4_selfrebootor::Rebootor::new(bus);
