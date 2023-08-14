@@ -21,6 +21,17 @@ teensy4-bsp = { version = "0.4.3" }
 usb-device = "0.2.9"
 usbd-hid = "0.6.1"
 
+imxrt-usbd = { version = "0.2.1", features = ["__log"] }
+imxrt-log = { version = "0.1.1", default-features = false, features = [
+    "log",
+    "lpuart",
+] }
+teensy4-panic = "0.2.2"
+
+# [patch.crates-io]
+# usb-device = { path = "../usb-device" }
+# imxrt-usbd = { path = "../imxrt-usbd" }
+
 
 [dev-dependencies]
 cortex-m = "0.7.7"
