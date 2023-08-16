@@ -8,24 +8,34 @@
 
 
 
+This crate provides a USB device that can be used by `teensy_loader_cli`'s `-r` flag to request a
+reboot into bootloader.
+
+This allows the board to be reprogrammed without having to press the `Reset`/`Boot` button.
+
+A requirement of this crate is that there is no other use for the USB port, as it will fully consume it.
+
+
 # Examples
 
-*- examples are intended for the [Teensy 4.0](https://www.pjrc.com/store/teensy40.html) board -*
+*- examples are intended for the [Teensy 4.0](https://www.pjrc.com/store/teensy40.html) or [Teensy MicroMod](https://www.sparkfun.com/products/16402) board -*
 
 ## Prerequisites
 
 The following hardware is required for the examples:
-- A [Teensy 4.0](https://www.pjrc.com/store/teensy40.html) development board
+- A [Teensy 4.0](https://www.pjrc.com/store/teensy40.html)/[Teensy MicroMod](https://www.sparkfun.com/products/16402) development board
 - Optional: A way to read the Teensy's UART, like a USB-UART-converter
 
 The following software tools have to be installed:
 - Python3 (as `python3`, or modify `run.py` to use the `python` binary)
 - `llvm-objcopy`
   - Install [`LLVM`](https://github.com/llvm/llvm-project/releases) tool suite
-- [`teensy-loader-cli`](https://www.pjrc.com/teensy/loader_cli.html)
+- [`teensy_loader_cli`](https://www.pjrc.com/teensy/loader_cli.html)
 
 
 ## Run
 
 - Connect the Teensy to PC via USB cable.
-- Run `cargo run --release --example rebootor`.
+- Run:
+    - For the *Teensy 4.0*: `cargo run --release --example teensy_4_0`.
+    - For the *Teensy MicroMod*: `cargo run --release --example teensy_micromod`.
