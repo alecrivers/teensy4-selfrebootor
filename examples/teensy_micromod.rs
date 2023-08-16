@@ -5,12 +5,13 @@
 #![no_std]
 #![no_main]
 
-use teensy4_bsp as bsp;
-use teensy4_panic as _;
+mod common;
+common::uart_panic_handler!(lpuart6, p1, p0, 115200);
 
 #[rtic::app(device = teensy4_bsp)]
 mod app {
-    use super::bsp;
+    use teensy4_bsp as bsp;
+
     use bsp::board;
     use bsp::hal;
     use bsp::logging;

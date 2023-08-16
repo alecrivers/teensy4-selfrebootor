@@ -24,7 +24,7 @@ usbd-hid = "0.6.1"
 [dev-dependencies]
 
 teensy4-bsp = { version = "0.4.3", features = ["rt"] }
-teensy4-panic = "0.2.2"
+teensy4-panic = { version = "0.2.2", default-features = false }
 
 rtic = { version = "2.0.1", features = ["thumbv7-backend"] }
 
@@ -40,6 +40,7 @@ nb = "1.1.0"           # Async
 # [patch.crates-io]
 # usb-device = { path = "../usb-device" }
 # imxrt-usbd = { path = "../imxrt-usbd" }
+# teensy4-panic = { path = "../teensy4-rs/teensy4-panic" }
 
 # Allow docsrs options
 [package.metadata.docs.rs]
