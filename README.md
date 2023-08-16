@@ -18,13 +18,12 @@ A requirement of this crate is that there is no other use for the USB port, as i
 
 # Examples
 
-*- examples are intended for the [Teensy 4.0](https://www.pjrc.com/store/teensy40.html) or [Teensy MicroMod](https://www.sparkfun.com/products/16402) board -*
+*- examples are intended for the [Teensy 4.0](https://www.pjrc.com/store/teensy40.html), [Teensy 4.1](https://www.pjrc.com/store/teensy41.html) or [Teensy MicroMod](https://www.sparkfun.com/products/16402) board -*
 
 ## Prerequisites
 
 The following hardware is required for the examples:
-- A [Teensy 4.0](https://www.pjrc.com/store/teensy40.html)/[Teensy MicroMod](https://www.sparkfun.com/products/16402) development board
-- Optional: A way to read the Teensy's UART, like a USB-UART-converter
+- A [Teensy 4.0](https://www.pjrc.com/store/teensy40.html)/[Teensy 4.1](https://www.pjrc.com/store/teensy41.html)/[Teensy MicroMod](https://www.sparkfun.com/products/16402) development board
 
 The following software tools have to be installed:
 - Python3 (as `python3`, or modify `run.py` to use the `python` binary)
