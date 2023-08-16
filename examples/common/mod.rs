@@ -16,8 +16,11 @@ macro_rules! uart_panic_handler {
             }
             impl<P, const N: u8> ::core::fmt::Write for UartWriter<P, N> {
                 fn write_str(&mut self, s: &str) -> ::core::fmt::Result {
-                    for b in s.as_bytes() {
-                        let _ = ::nb::block!(self.uart.write(*b));
+                    for &b in s.as_bytes() {
+                        if b == b'\n' {
+                            let _ = ::nb::block!(self.uart.write(b'\r'));
+                        }
+                        let _ = ::nb::block!(self.uart.write(b));
                     }
                     Ok(())
                 }
@@ -25,7 +28,10 @@ macro_rules! uart_panic_handler {
 
             let mut uart = UartWriter { uart };
 
-            ::core::write!(uart, "\r\n{}\r\n", info).ok();
+            ::core::writeln!(uart).ok();
+            ::core::writeln!(uart, "{}", info).ok();
+            ::core::writeln!(uart).ok();
+
             let _ = ::nb::block!(uart.uart.flush());
 
             ::teensy4_panic::sos()
