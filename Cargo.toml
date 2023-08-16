@@ -1,12 +1,12 @@
 [package]
 name = "teensy4-selfrebootor"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 authors = ["Finomnis <finomnis@gmail.com>"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/Finomnis/teensy4-selfrebootor"
-description = "A self-rebooting implementation of the rebootor for teensy4"
+description = "A self-rebooting implementation of teensy's rebootor for teensy4"
 keywords = ["teensy4", "imxrt", "nxp", "rebootor"]
 categories = ["embedded", "no-std"]
 
@@ -16,38 +16,30 @@ exclude = ["/.gitignore", "/.github/", "/.vscode/"]
 [dependencies]
 log = "0.4.19"
 
-# Additional CI dependencies
 teensy4-bsp = { version = "0.4.3" }
 usb-device = "0.2.9"
 usbd-hid = "0.6.1"
 
-imxrt-usbd = { version = "0.2.1", features = ["__log"] }
+
+[dev-dependencies]
+
+teensy4-bsp = { version = "0.4.3", features = ["rt"] }
+teensy4-panic = "0.2.2"
+
+rtic = { version = "2.0.1", features = ["thumbv7-backend"] }
+
 imxrt-log = { version = "0.1.1", default-features = false, features = [
     "log",
     "lpuart",
 ] }
-teensy4-panic = "0.2.2"
+
+embedded-hal = "0.2.7"
+nb = "1.1.0"           # Async
+
 
 # [patch.crates-io]
 # usb-device = { path = "../usb-device" }
 # imxrt-usbd = { path = "../imxrt-usbd" }
-
-
-[dev-dependencies]
-cortex-m = "0.7.7"
-embedded-hal = "0.2.7"
-
-# Board support package
-teensy4-bsp = { version = "0.4.3", features = ["rt"] }
-
-# Logging
-critical-section = "1.1.1"
-
-# Packages necessary for board usage
-nb = "1.1.0" # Async
-
-rtic = { version = "2.0.1", features = ["thumbv7-backend"] }
-
 
 # Allow docsrs options
 [package.metadata.docs.rs]

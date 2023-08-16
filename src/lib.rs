@@ -54,6 +54,7 @@ impl<'a> Rebootor<'a> {
                 Ok(info) => {
                     let buf = &buf[..info];
                     if buf == b"reboot" {
+                        log::info!("Rebooting to HalfKay ...");
                         reboot::do_reboot();
                     }
                 }

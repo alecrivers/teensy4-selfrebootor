@@ -17,8 +17,7 @@ mod app {
 
     use embedded_hal::serial::Write;
 
-    use hal::usbd::{BusAdapter, EndpointMemory, EndpointState};
-    use imxrt_usbd::Speed;
+    use hal::usbd::{BusAdapter, EndpointMemory, EndpointState, Speed};
     use usb_device::bus::UsbBusAllocator;
 
     use teensy4_selfrebootor::Rebootor;
