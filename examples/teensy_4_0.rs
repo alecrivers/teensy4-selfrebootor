@@ -99,7 +99,7 @@ mod app {
         led.toggle();
     }
 
-    #[task(binds = PIT, priority = 1, local = [poll_log, log_poller])]
+    #[task(binds = PIT, local = [poll_log, log_poller], priority = 1)]
     fn blink_and_log(cx: blink_and_log::Context) {
         let blink_and_log::LocalResources {
             poll_log,
