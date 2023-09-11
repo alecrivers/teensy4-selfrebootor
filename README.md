@@ -27,14 +27,17 @@ The following hardware is required for the examples:
 
 The following software tools have to be installed:
 - Python3 (as `python3`, or modify `run.py` to use the `python` binary)
-- `llvm-objcopy`
-  - Install [`LLVM`](https://github.com/llvm/llvm-project/releases) tool suite
+- [`cargo-binutils`](https://crates.io/crates/cargo-binutils)
 - [`teensy_loader_cli`](https://www.pjrc.com/teensy/loader_cli.html)
 
 
 ## Run
 
 - Connect the Teensy to PC via USB cable.
+- Press the `Reset`/`Boot` button on the Teensy.
 - Run:
-    - For the *Teensy 4.0*: `cargo run --release --example teensy_4_0`.
-    - For the *Teensy MicroMod*: `cargo run --release --example teensy_micromod`.
+  ```bash
+  cargo run --release --example teensy4_selfrebootor
+  ```
+- Run the previous command again. This time the command should not need
+  the `Reset`/`Boot` button. The Teensy should switch to boot mode automatically.
