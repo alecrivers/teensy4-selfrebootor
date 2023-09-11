@@ -27,6 +27,8 @@ impl<'a> Rebootor<'a> {
             .max_packet_size_0(64)
             .build();
 
+        device.bus().set_interrupts(true);
+
         Self {
             class,
             device,

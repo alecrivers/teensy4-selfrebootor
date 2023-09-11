@@ -39,7 +39,6 @@ mod app {
         poll_log: hal::pit::Pit<3>,
         log_poller: logging::Poller,
         rebootor: Rebootor<'static>,
-        led: board::Led,
     }
 
     #[shared]
@@ -52,10 +51,9 @@ mod app {
             pit: (_, _, _, mut poll_log),
             pins,
             usb,
-            mut gpio2,
             lpuart6,
             ..
-        } = board::tmm(cx.device);
+        } = board::t40(cx.device);
 
         // Logging
         let log_dma = dma[LOG_DMA_CHANNEL].take().unwrap();
@@ -70,13 +68,8 @@ mod app {
         poll_log.set_load_timer_value(LOG_POLL_INTERVAL);
         poll_log.enable();
 
-        // Initialize LED
-        let led = board::led(&mut gpio2, pins.p13);
-        led.set();
-
         // USB
         let bus = BusAdapter::with_speed(usb, &EP_MEMORY, &EP_STATE, Speed::LowFull);
-        bus.set_interrupts(true);
         let bus = cx.local.bus.insert(UsbBusAllocator::new(bus));
         let rebootor = teensy4_selfrebootor::Rebootor::new(bus);
 
@@ -86,22 +79,18 @@ mod app {
                 log_poller,
                 poll_log,
                 rebootor,
-                led,
             },
         )
     }
 
-    #[task(binds = USB_OTG1, local = [rebootor, led], priority = 5)]
+    #[task(binds = USB_OTG1, priority = 5, local = [rebootor])]
     fn usb1(ctx: usb1::Context) {
-        let usb1::LocalResources { rebootor, led, .. } = ctx.local;
-
-        rebootor.poll();
-        led.toggle();
+        ctx.local.rebootor.poll();
     }
 
-    #[task(binds = PIT, local = [poll_log, log_poller], priority = 1)]
-    fn blink_and_log(cx: blink_and_log::Context) {
-        let blink_and_log::LocalResources {
+    #[task(binds = PIT, priority = 1, local = [poll_log, log_poller])]
+    fn logger(cx: logger::Context) {
+        let logger::LocalResources {
             poll_log,
             log_poller,
             ..
@@ -109,6 +98,16 @@ mod app {
 
         if poll_log.is_elapsed() {
             poll_log.clear_elapsed();
+
+            // if let Some(event) = hal::usbd::log_events::next() {
+            //     match event {
+            //         hal::usbd::log_events::LogEvent::Poll(reg) => {
+            //             log::info!("--- Poll ({}) ---", reg)
+            //         }
+            //         other => log::info!("{:?}", other),
+            //     }
+            // }
+
             log_poller.poll();
         }
     }

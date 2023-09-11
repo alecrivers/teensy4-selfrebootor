@@ -37,10 +37,12 @@ embedded-hal = "0.2.7"
 nb = "1.1.0"           # Async
 
 
-# [patch.crates-io]
-# usb-device = { path = "../usb-device" }
-# imxrt-usbd = { path = "../imxrt-usbd" }
-# teensy4-panic = { path = "../teensy4-rs/teensy4-panic" }
+[patch.crates-io]
+# Fix hang-on-suspend problem. TODO: revert back to an official release once merged upstream.
+imxrt-usbd = { git = "https://github.com/mciantyre/imxrt-usbd.git", rev = "1d5105619823a4f45134818c8d957d2b4175e07c" }
+
+# Use prettier SOS pattern
+#teensy4-panic = { git = "https://github.com/Finomnis/teensy4-rs.git", branch = "fix_sos" }
 
 # Allow docsrs options
 [package.metadata.docs.rs]

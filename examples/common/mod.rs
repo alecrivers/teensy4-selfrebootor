@@ -7,7 +7,7 @@ macro_rules! uart_panic_handler {
 
             let ::teensy4_bsp::board::Resources {
                 $uart: uart, pins, ..
-            } = ::teensy4_bsp::board::tmm(unsafe { ::teensy4_bsp::ral::Instances::instances() });
+            } = ::teensy4_bsp::board::t40(unsafe { ::teensy4_bsp::ral::Instances::instances() });
 
             let uart = ::teensy4_bsp::board::lpuart(uart, pins.$tx_pin, pins.$rx_pin, $baud);
 
