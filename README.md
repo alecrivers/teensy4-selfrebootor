@@ -7,9 +7,7 @@
 [![docs.rs](https://img.shields.io/docsrs/teensy4-selfrebootor)](https://docs.rs/teensy4-selfrebootor)
 
 
-
-This crate provides a USB device that can be used by `teensy_loader_cli`'s `-r` flag to request a
-reboot into bootloader.
+This crate provides a USB device compatible with `teensy_loader_cli -r` to force the Teensy4 to reboot itself into bootloader.
 
 This allows the board to be reprogrammed without having to press the `Reset`/`Boot` button.
 
