@@ -99,15 +99,6 @@ mod app {
         if poll_log.is_elapsed() {
             poll_log.clear_elapsed();
 
-            // if let Some(event) = hal::usbd::log_events::next() {
-            //     match event {
-            //         hal::usbd::log_events::LogEvent::Poll(reg) => {
-            //             log::info!("--- Poll ({}) ---", reg)
-            //         }
-            //         other => log::info!("{:?}", other),
-            //     }
-            // }
-
             log_poller.poll();
         }
     }
