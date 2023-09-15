@@ -1,6 +1,6 @@
 [package]
 name = "teensy4-selfrebootor"
-version = "0.0.2"
+version = "0.1.0"
 edition = "2021"
 authors = ["Finomnis <finomnis@gmail.com>"]
 license = "MIT OR Apache-2.0"
@@ -24,7 +24,7 @@ usbd-hid = "0.6.1"
 [dev-dependencies]
 
 teensy4-bsp = { version = "0.4.3", features = ["rt"] }
-teensy4-panic = { version = "0.2.2", default-features = false }
+teensy4-panic = { version = "0.2.3", default-features = false }
 
 rtic = { version = "2.0.1", features = ["thumbv7-backend"] }
 
@@ -36,13 +36,6 @@ imxrt-log = { version = "0.1.1", default-features = false, features = [
 embedded-hal = "0.2.7"
 nb = "1.1.0"           # Async
 
-
-[patch.crates-io]
-# Fix hang-on-suspend problem. TODO: revert back to an official release once merged upstream.
-imxrt-usbd = { git = "https://github.com/mciantyre/imxrt-usbd.git", rev = "1d5105619823a4f45134818c8d957d2b4175e07c" }
-
-# Use prettier SOS pattern
-#teensy4-panic = { git = "https://github.com/Finomnis/teensy4-rs.git", branch = "fix_sos" }
 
 # Allow docsrs options
 [package.metadata.docs.rs]
