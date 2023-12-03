@@ -5,12 +5,14 @@
 #![no_std]
 #![no_main]
 
-mod common;
-common::uart_panic_handler!(lpuart6, p1, p0, 115200);
+use teensy4_bsp as bsp;
+
+use bsp::pins::common::{P0, P1};
+imxrt_uart_panic::register!(LPUART6, P1, P0, 115200, teensy4_panic::sos);
 
 #[rtic::app(device = teensy4_bsp)]
 mod app {
-    use teensy4_bsp as bsp;
+    use super::bsp;
 
     use bsp::board;
     use bsp::hal;
