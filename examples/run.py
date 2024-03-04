@@ -20,7 +20,11 @@ def main():
         hexfile = tmpdir / "firmware.hex"
 
         subprocess.run(["rust-objcopy", "-O", "ihex", binary, hexfile], check=True)
-        subprocess.run(["teensy_loader_cli", "--mcu=imxrt1062", "-wrv", hexfile], check=True)
+        try:
+            subprocess.run(["teensy_loader_cli", "--mcu=imxrt1062", "-wrv", hexfile], check=True)
+        except subprocess.CalledProcessError:
+            print("Retrying ...")
+            subprocess.run(["teensy_loader_cli", "--mcu=imxrt1062", "-wrv", hexfile], check=True)
 
     print("Teensy successfully flashed.")
 
