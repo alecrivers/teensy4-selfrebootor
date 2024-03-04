@@ -1,5 +1,5 @@
 #![no_std]
-//#![deny(missing_docs)]
+#![deny(missing_docs)]
 #![doc = include_str!("../README.md")]
 #![doc(issue_tracker_base_url = "https://github.com/Finomnis/teensy4-selfrebootor/issues")]
 #![cfg_attr(docsrs, feature(doc_cfg))]
@@ -11,6 +11,14 @@ use usbd_hid::{descriptor::SerializedDescriptor, hid_class::HIDClass};
 mod hid_descriptor;
 mod reboot;
 
+pub use reboot::reboot_to_bootloader;
+
+/// The rebootor USB driver.
+///
+/// Once it receives a reboot request (`teensy_loader_cli -r`), it reboots
+/// the device into the HalfKay bootloader for flashing.
+///
+/// This allows reflashing without having to press the `boot` hardware button.
 pub struct Rebootor<'a> {
     class: HIDClass<'a, BusAdapter>,
     device: UsbDevice<'a, BusAdapter>,
@@ -18,6 +26,12 @@ pub struct Rebootor<'a> {
 }
 
 impl<'a> Rebootor<'a> {
+    /// Creates a rebootor usb device.
+    ///
+    /// In order for the device to function, its `poll` function has to be called
+    /// periodically.
+    ///
+    /// For more information, see the crate's examples.
     pub fn new(bus_alloc: &'a UsbBusAllocator<BusAdapter>) -> Self {
         let class = HIDClass::new(bus_alloc, crate::hid_descriptor::Rebootor::desc(), 10);
         let device = UsbDeviceBuilder::new(bus_alloc, UsbVidPid(0x16C0, 0x0477))
@@ -36,6 +50,10 @@ impl<'a> Rebootor<'a> {
         }
     }
 
+    /// Needs to be called every couple of milliseconds for the USB device to work
+    /// properly.
+    ///
+    /// See the crate's examples for more information.
     pub fn poll(&mut self) {
         self.device.poll(&mut [&mut self.class]);
 
@@ -57,7 +75,7 @@ impl<'a> Rebootor<'a> {
                     let buf = &buf[..info];
                     if buf == b"reboot" {
                         log::info!("Rebooting to HalfKay ...");
-                        reboot::do_reboot();
+                        reboot::reboot_to_bootloader();
                     }
                 }
                 Err(usb_device::UsbError::WouldBlock) => (),
