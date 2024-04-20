@@ -37,6 +37,11 @@ imxrt-log = { version = "0.1.1", default-features = false, features = [
 embedded-hal = "0.2.7"
 nb = "1.1.0"           # Async
 
+# Pull rtic-monotonics from github because version 2.0.0 hasn't made it to crates.io as of this writing.
+rtic-monotonics = { git = "https://github.com/rtic-rs/rtic.git", branch = "master", package = "rtic-monotonics", features = ["imxrt_gpt1"] }
+# Custom usbd-serial that (1) matches the version of usb-device used by other dependencies and
+# (2) supports custom control requests, enabling us to handle the reboot request.
+usbd-serial = { git = "https://github.com/alecrivers/usbd-serial.git" }
 
 # Allow docsrs options
 [package.metadata.docs.rs]
