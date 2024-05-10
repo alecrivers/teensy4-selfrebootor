@@ -69,10 +69,10 @@ impl<'a> Rebootor<'a> {
         if self.configured {
             let mut buf = [0u8; 6];
 
-            let result = self.class.pull_raw_output(&mut buf);
+            let result = self.class.pull_raw_report(&mut buf);
             match result {
                 Ok(info) => {
-                    let buf = &buf[..info];
+                    let buf = &buf[..info.len];
                     if buf == b"reboot" {
                         log::info!("Rebooting to HalfKay ...");
                         reboot::reboot_to_bootloader();
